@@ -90,7 +90,8 @@ z-index: 999;}
 }
 .logo h1 a:hover {text-decoration: none;opacity: .7}
 .logo h1 a span {
-    color: #e67e22;
+   color: #e67e22;
+
 }
 .shopping-item {
     border: 1px solid #ddd;
