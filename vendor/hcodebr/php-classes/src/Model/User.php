@@ -9,6 +9,10 @@ use \Hcode\Mailer;
 
   	  const SESSION = "User";
       const SECRET = "HcodePhp7_secret";
+      const SECRET_IV = "HcodePhp7_Secret_IV";
+      const ERROR = "UserError";
+      const ERROR_REGISTER = "UserErrorRegister";
+      const SUCCESS = "UserSucesss";
 
       public static function login($login, $password){
 
