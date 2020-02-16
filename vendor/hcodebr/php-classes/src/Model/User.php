@@ -185,8 +185,9 @@ use \Hcode\Mailer;
 
            //$code = base64_encode( openssl_encrypt(MCRYPT_RIJNDAEL_128, User::SECRET, $dataRecovery["idrecovery"], MCRYPT_MODE_ECB) );
 
-           $cipher="AES-128-ECB";
-           $code= base64_encode(openssl_encrypt($dataRecovery["idrecovery"],$cipher,User::SECRET));
+           $code = openssl_encrypt($dataRecovery['idrecovery'], 'AES-128-CBC', pack("a16", User::SECRET), 0, pack("a16", User::SECRET_IV));
+           //$cipher="AES-128-ECB";
+           $code= base64_encode($code);
 
            $link = "http://www.purasublimacao.com.br/admin/forgot/reset?code=$code";
 
@@ -207,9 +208,13 @@ use \Hcode\Mailer;
       public static function validForgotDecrypt($code)
       {
 
-        $cipher="AES-128-ECB";
+        //$cipher="AES-128-ECB";
 
-        $idrecovery = openssl_decrypt(base64_decode($code), $cipher, User::SECRET);
+        //$idrecovery = openssl_decrypt(base64_decode($code), $cipher, User::SECRET);
+
+        $code = base64_decode($code);
+
+        $idrecovery = openssl_decrypt($code, 'AES-128-CBC', pack("a16", User::SECRET), 0, pack("a16", User::SECRET_IV));
 
         $sql = new Sql();
 
