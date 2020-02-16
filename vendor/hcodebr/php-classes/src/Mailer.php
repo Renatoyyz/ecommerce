@@ -7,7 +7,7 @@ use Rain\Tpl;
 class Mailer {
 
 	const USERNAME = "renato@witcare.com.br";
-	const PASSWORD = "Wit1484A";
+	const PASSWORD = "";
 	const NAME_FROM = "Pura sublimação";
 	const SMTP = "smtp.kinghost.net";
 	const PORT = 587;
