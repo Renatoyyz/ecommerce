@@ -30,6 +30,8 @@ use \Hcode\Mailer;
 
         $this->setData($results[0]);
 
+        Category::updateFile();
+
       }//save
 
       public function get($idcategory)
@@ -59,6 +61,23 @@ use \Hcode\Mailer;
 
 
         ));
+
+        Category::updateFile();
+
+      }
+
+      public static function updateFile()
+      {
+
+        $catagories = Category::listALL();
+
+        $html = [];
+
+        foreach ($catagories as $row) {
+          array_push($html, '<li><a href="/categories/'.$row['idcategory'].'">'.$row['descategory'].'</a></li>');
+        }
+
+        file_put_contents($_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR . "categories-menu.html", implode('', $html));
 
       }
 
