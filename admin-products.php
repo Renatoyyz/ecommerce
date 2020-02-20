@@ -95,6 +95,6 @@ use \Hcode\Model\Product;
      header("Location: /admin/products");
      exit;
 
-  });
+  }); 
 
 ?>

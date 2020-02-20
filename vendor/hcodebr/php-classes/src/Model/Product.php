@@ -16,6 +16,23 @@ use \Hcode\Mailer;
         return $sql->select("SELECT * FROM tb_products ORDER BY desproduct;");
       }//list all
 
+      public static function checkList($list)
+      {
+            foreach ($list as &$row) {
+             $p = new Product();
+             $p->setData($row);
+             $row = $p->getValues();
+
+            }
+
+            return $list;
+      }
+
+      public static function formatPrice($vlprice)
+      {
+
+      }
+
       public function save()
       {//save
 
