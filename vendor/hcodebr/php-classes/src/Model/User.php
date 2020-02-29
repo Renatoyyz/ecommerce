@@ -37,7 +37,7 @@ use \Hcode\Mailer;
           ||
           !$_SESSION[User::SESSION]
           ||
-          !(int)$_SESSION[User::SESSION]["iduser"] > 0
+          !(int)$_SESSION[User::SESSION]['iduser'] > 0
         ){
             //Não está logado
             return false;
@@ -88,7 +88,6 @@ use \Hcode\Mailer;
             return $user;
 
         }else{
-          echo $data["despassword"];
         	throw new \Exception("Usuário inexistente ou senha inválida!");
 
         }

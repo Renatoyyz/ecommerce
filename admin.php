@@ -5,7 +5,7 @@ use \Hcode\Model\User;
 
   $app->get('/admin', function() {
     
-  User::verifyLogin();
+  //User::verifyLogin();
 
 	$page = new PageAdmin();
 	$page->setTpl("index");
@@ -29,9 +29,8 @@ $app->post('/admin/login',  function(){
 
      //User::verifyLogin();
 
-     User::login($_POST["login"], $_POST["password"]);
+     User::login($_POST['login'], $_POST['password']);
      header("Location: /admin");
-     
      exit;
 
 });

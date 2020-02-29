@@ -27,7 +27,7 @@
 <body class="hold-transition login-page">
 <div class="login-box">
   <div class="login-logo">
-    <a href="/res/admin/index2.html"><b>Admin</b>Pura Sublimação</a>
+    <a href="/"><b>Admin</b>Pura Sublimação</a>
   </div>
   <!-- /.login-logo -->
   <div class="login-box-body">
