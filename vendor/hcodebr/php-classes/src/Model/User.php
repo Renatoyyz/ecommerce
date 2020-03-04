@@ -67,35 +67,35 @@ use \Hcode\Mailer;
 
       public static function login($login, $password){
 
-      	$sql = new Sql();
-        $results = $sql->select("SELECT * FROM tb_users WHERE deslogin = :LOGIN", [
+                $sql = new Sql();
 
-              ':LOGIN'=>$login
-          
-        ]);
+                $results = $sql->select("SELECT * FROM tb_users a INNER JOIN tb_persons b ON a.idperson = b.idperson WHERE a.deslogin = :LOGIN", array(
+                  ":LOGIN"=>$login
+                )); 
 
-        if( count($results) === 0 ){
-           throw new \Exception("Usuário inexistente ou senha inválida!");
-        }
+                if (count($results) === 0)
+                {
+                  throw new \Exception("Usuário inexistente ou senha inválida.");
+                }
 
-        $data = $results[0];
+                $data = $results[0];
 
-        if(password_verify($password, $data['despassword']))
-        {
-        	$user = new User();
+                if (password_verify($password, $data["despassword"]) === true)
+                {
 
-          $data['deslogin'] = utf8_encode($data['deslogin']);
+                  $user = new User();
 
-            $user->setData($data);
+                  $data['desperson'] = utf8_encode($data['desperson']);
 
-            $_SESSION[User::SESSION] = $user->getValues();
+                  $user->setData($data);
 
-            return $user;
+                  $_SESSION[User::SESSION] = $user->getValues();
 
-        }else{
-        	throw new \Exception("Usuário inexistente ou senha inválida!");
+                  return $user;
 
-        }
+                } else {
+                  throw new \Exception("Usuário inexistente ou senha inválida.");
+                }
 
       }
 
@@ -132,14 +132,12 @@ use \Hcode\Mailer;
         $sql = new Sql();
 
         $results = $sql->select("CALL sp_users_save(:desperson, :deslogin, :despassword, :desemail, :nrphone, :inadmin)", array(
-
-           ":desperson"=>utf8_decode($this->getdesperson()),
-           ":deslogin"=>User::getPasswordHash($this->getdeslogin()),
-           ":despassword"=>$this->getdespassword(),
-           ":desemail"=>$this->getdesemail(),
-           ":nrphone"=>$this->getnrphone(),
-           ":inadmin"=>$this->getinadmin()
-
+          ":desperson"=>utf8_decode($this->getdesperson()),
+          ":deslogin"=>$this->getdeslogin(),
+          ":despassword"=>User::getPasswordHash($this->getdespassword()),
+          ":desemail"=>$this->getdesemail(),
+          ":nrphone"=>$this->getnrphone(),
+          ":inadmin"=>$this->getinadmin()
         ));
 
         $this->setData($results[0]);
@@ -366,6 +364,17 @@ use \Hcode\Mailer;
       {
 
         $_SESSION[User::ERROR_REGISTER] = $msg;
+
+      }
+
+      public static function getErrorRegister()
+      {
+
+        $msg = (isset($_SESSION[User::ERROR_REGISTER]) && $_SESSION[User::ERROR_REGISTER]) ? $_SESSION[User::ERROR_REGISTER] : '';
+
+        User::clearErrorRegister();
+
+        return $msg;
 
       }
 
