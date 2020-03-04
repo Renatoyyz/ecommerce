@@ -194,69 +194,73 @@ use \Hcode\Mailer;
 
       }
 
-      public static function getForgot($email)
+      public static function getForgot($email, $inadmin = true)
       {
 
          $sql = new Sql();
 
-         $results = $sql->select("
-            SELECT *
-            FROM tb_persons a
-            INNER JOIN tb_users b USING(idperson)
-            WHERE a.desemail = :email
+            $results = $sql->select("
+              SELECT *
+              FROM tb_persons a
+              INNER JOIN tb_users b USING(idperson)
+              WHERE a.desemail = :email;
+            ", array(
+              ":email"=>$email
+            ));
 
-          ",array(
+            if (count($results) === 0)
+            {
 
-            ":email"=>$email
+              throw new \Exception("Não foi possível recuperar a senha.");
 
-          ));
+            }
+            else
+            {
 
-         if(count($results) === 0)
-         {
+              $data = $results[0];
 
-          throw new \Exception("Não foi possível recuperar a senha!", 1);
-          
-         }else
-         {
+              $results2 = $sql->select("CALL sp_userspasswordsrecoveries_create(:iduser, :desip)", array(
+                ":iduser"=>$data['iduser'],
+                ":desip"=>$_SERVER['REMOTE_ADDR']
+              ));
 
-          $data = $results[0];
+              if (count($results2) === 0)
+              {
 
-          $results2 = $sql->select("CALL sp_userspasswordsrecoveries_create(:iduser, :desip)", array(
+                throw new \Exception("Não foi possível recuperar a senha.");
 
-            ":iduser"=>$data["iduser"],
-            ":desip"=>$_SERVER["REMOTE_ADDR"]
+              }
+              else
+              {
 
-          ));
+                $dataRecovery = $results2[0];
 
-          if( count($results2) === 0 )
-          {
+                $code = openssl_encrypt($dataRecovery['idrecovery'], 'AES-128-CBC', pack("a16", User::SECRET), 0, pack("a16", User::SECRET_IV));
 
-            throw new \Exception("Não foi possível recuperar a senha!", 1);
+                $code = base64_encode($code);
 
-          }else{
+                if ($inadmin === true) {
 
-           $dataRecovery = $results2[0];
-          // base64_encode( mcrypt_encrypt(cipher, key, data, mode) )
+                  $link = "http://www.purasublimacao.com.br/admin/forgot/reset?code=$code";
 
-           //$code = base64_encode( openssl_encrypt(MCRYPT_RIJNDAEL_128, User::SECRET, $dataRecovery["idrecovery"], MCRYPT_MODE_ECB) );
+                } else {
 
-           $code = openssl_encrypt($dataRecovery['idrecovery'], 'AES-128-CBC', pack("a16", User::SECRET), 0, pack("a16", User::SECRET_IV));
-           //$cipher="AES-128-ECB";
-           $code= base64_encode($code);
+                  $link = "http://www.purasublimacao.com.br/forgot/reset?code=$code";
+                  
+                }       
 
-           $link = "http://www.purasublimacao.com.br/admin/forgot/reset?code=$code";
+                $mailer = new Mailer($data['desemail'], $data['desperson'], "Redefinir senha da Hcode Store", "forgot", array(
+                  "name"=>$data['desperson'],
+                  "link"=>$link
+                ));       
 
-           $mailer = new Mailer($data["desemail"], $data["desperson"], "Redefinir senha", "forgot", array(
+                $mailer->sendEmail();
 
-            "name"=>$data["desperson"],
-            "link"=>$link
-           ));
+                return $link;
 
-            $mailer->sendEmail();
+              }
 
-          }
-
-         }
+            }
 
       } 
 
