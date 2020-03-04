@@ -9,47 +9,45 @@ use \Hcode\Model\User;
 
   class Cart extends Model {//class
 
-        const SESSION = "Cart";
+        const SESSION = 'Cart';
         const SESSION_ERROR = 'CartError';
 
         public static function getFromSession()
         {
 
-          $cart = new Cart();
+            $cart = new Cart();
 
-          if( isset($_SESSION[Cart::SESSION]) && (int)$_SESSION[Cart::SESSION]['idcart'] > 0 ){
+                if ( isset($_SESSION[Cart::SESSION]) && (int)$_SESSION[Cart::SESSION]['idcart'] > 0 ) {
 
-            $cart->get((int)$_SESSION[Cart::SESSION]['idcart']);
+                  $cart->get($_SESSION[Cart::SESSION]['idcart']);
 
-          }else{
+                } else {
 
-            $cart->getFromSessionID();
+                  $cart->getFromSessionID();
 
-            if( !(int)$cart->getidcart() > 0 ) {
+                  if (!(int)$cart->getidcart() > 0) {
 
-              $data = [
-                'dessessionid'=>session_id()
-              ];
+                    $data = [
+                      'dessessionid'=>session_id()
+                    ];
 
-              if( User::checkLogin(false) ){
+                    if (User::checkLogin(false)) {
 
-                $user = User::getFromSession();
+                      $user = User::getFromSession();
+                      
+                      $data['iduser'] = $user->getiduser(); 
 
-                $data['iduser'] = $user->getiduser();
+                    }
 
-              }
+                    $cart->setData($data);
+                    $cart->save();
+                    $cart->setToSession();
 
-              $cart->setData($data);
+                  }
 
-              $cart->save();
+           }
 
-              $cart->setToSession();
-
-            }
-
-          }
-
-          return $cart;
+            return $cart;
 
         }
 
@@ -66,10 +64,8 @@ use \Hcode\Model\User;
           $sql = new Sql();
 
           $results = $sql->select("SELECT * FROM tb_carts WHERE dessessionid = :dessessionid", [
-
-            ':dessessionid'=>session_id()
-
-          ]);
+                ':dessessionid'=>session_id()
+              ]);
 
           if( count($results) > 0 )
           {
@@ -80,7 +76,7 @@ use \Hcode\Model\User;
 
         }
 
-        public function get($idcart)
+        public function get(int $idcart)
         {
 
           $sql = new Sql();
@@ -90,6 +86,8 @@ use \Hcode\Model\User;
             ':idcart'=>$idcart
 
           ]);
+
+          
 
           if( count($results) > 0 )
           {

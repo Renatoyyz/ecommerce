@@ -19,11 +19,14 @@ use \Hcode\Mailer;
 
         $user = new User();
 
-        if( isset($_SESSION[User::SESSION]) && (int)$_SESSION[User::SESSION]['iduser'] > 0 ){
-          
-          $user->setData($_SESSION[User::SESSION]);
-          
-        }
+          if (isset($_SESSION[User::SESSION]) && (int)$_SESSION[User::SESSION]['iduser'] > 0) {
+
+            $user->setData($_SESSION[User::SESSION]);
+
+           // echo json_encode($user->getValues());
+           // exit;
+
+          }
 
         return $user;
 
@@ -65,11 +68,11 @@ use \Hcode\Mailer;
       public static function login($login, $password){
 
       	$sql = new Sql();
-        $results = $sql->select("SELECT * FROM tb_users WHERE deslogin = :LOGIN;", array(
+        $results = $sql->select("SELECT * FROM tb_users WHERE deslogin = :LOGIN", [
 
-              ":LOGIN"=>$login
+              ':LOGIN'=>$login
           
-        ));
+        ]);
 
         if( count($results) === 0 ){
            throw new \Exception("Usuário inexistente ou senha inválida!");
@@ -77,9 +80,11 @@ use \Hcode\Mailer;
 
         $data = $results[0];
 
-        if(password_verify($password, $data["despassword"]))
+        if(password_verify($password, $data['despassword']))
         {
         	$user = new User();
+
+          $data['deslogin'] = utf8_encode($data['deslogin']);
 
             $user->setData($data);
 
@@ -96,8 +101,13 @@ use \Hcode\Mailer;
 
       public static function verifyLogin($inadmin = true)
       {
-        if( User::checkLogin( $inadmin ) ){
-          header("Location: /admin/login");
+          if( !User::checkLogin( $inadmin ) ){
+
+            if( $inadmin ){
+              header("Location: /admin/login");
+            }else{
+              header("Location: /login");
+            }    
           exit;
         }
       }
@@ -123,8 +133,8 @@ use \Hcode\Mailer;
 
         $results = $sql->select("CALL sp_users_save(:desperson, :deslogin, :despassword, :desemail, :nrphone, :inadmin)", array(
 
-           ":desperson"=>$this->getdesperson(),
-           ":deslogin"=>$this->getdeslogin(),
+           ":desperson"=>utf8_decode($this->getdesperson()),
+           ":deslogin"=>User::getPasswordHash($this->getdeslogin()),
            ":despassword"=>$this->getdespassword(),
            ":desemail"=>$this->getdesemail(),
            ":nrphone"=>$this->getnrphone(),
@@ -144,7 +154,11 @@ use \Hcode\Mailer;
           ":iduser"=>$iduser
         ));
 
-        $this->setData($results[0]);
+        $data = $results[0];
+
+        $data['desperson'] = utf8_encode($data['desperson']);
+
+        $this->setData($data);
 
       }
 
@@ -156,9 +170,9 @@ use \Hcode\Mailer;
         $results = $sql->select("CALL sp_usersupdate_save(:iduser, :desperson, :deslogin, :despassword, :desemail, :nrphone, :inadmin)", array(
 
            ":iduser"=>$this->getiduser(),
-           ":desperson"=>$this->getdesperson(),
+           ":desperson"=>utf8_decode($this->getdesperson()),
            ":deslogin"=>$this->getdeslogin(),
-           ":despassword"=>$this->getdespassword(),
+           ":despassword"=>User::getPasswordHash($this->getdespassword()),
            ":desemail"=>$this->getdesemail(),
            ":nrphone"=>$this->getnrphone(),
            ":inadmin"=>$this->getinadmin()
@@ -320,6 +334,71 @@ use \Hcode\Mailer;
                 ":iduser"=>$this->getiduser()
         
         ));
+
+      }
+
+      public static function setError($msg)
+      {
+
+        $_SESSION[User::ERROR] = $msg;
+
+      }
+
+      public static function getError()
+      {
+
+        $msg = (isset($_SESSION[User::ERROR]) && $_SESSION[User::ERROR] ) ? $_SESSION[User::ERROR] :  '';
+
+        User::clearError();
+
+        return $msg;
+
+      }
+
+      public static function clearError()
+      {
+
+        $_SESSION[User::ERROR] = NULL;
+
+      }
+
+      public static function setErrorRegister($msg)
+      {
+
+        $_SESSION[User::ERROR_REGISTER] = $msg;
+
+      }
+
+      public static function clearErrorRegister()
+      {
+
+         $_SESSION[User::ERROR_REGISTER] = NULL;
+
+      }
+
+      public static function checkLoginExist($login)
+      {
+
+        $sql = new Sql();
+
+        $results = $sql->select("SELECT * FROM tb_users WHERE deslogin = :deslogin",[
+
+          ':deslogin'=>$login
+
+        ]);
+
+        return (count($results) > 0);
+
+      }
+
+      public static function getPasswordHash($password)
+      {
+
+        return password_hash($password, PASSWORD_DEFAULT, [
+
+          'cost'=>12
+
+        ]);
 
       }
 
