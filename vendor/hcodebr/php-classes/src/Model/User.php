@@ -110,6 +110,10 @@ use \Hcode\Mailer;
             }    
           exit;
         }
+
+        //header("Location: /");
+        //exit;
+
       }
 
       public static function logout()

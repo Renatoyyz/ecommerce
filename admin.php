@@ -27,7 +27,7 @@ $app->get('/admin/login', function(){
 
 $app->post('/admin/login',  function(){
 
-     //User::verifyLogin();
+     //User::verifyLogin(true);
 
      User::login($_POST['login'], $_POST['password']);
      header("Location: /admin");
