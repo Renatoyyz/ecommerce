@@ -4,10 +4,18 @@ namespace Hcode\DB;
 
 class Sql {
 
+    
 	const HOSTNAME = "127.0.0.1";
 	const USERNAME = "root";
 	const PASSWORD = "";
 	const DBNAME = "db_ecommerce";
+	
+	/*
+	const HOSTNAME = "mysql.witcore.kinghost.net";
+	const USERNAME = "witcore";
+	const PASSWORD = "renato123";
+	const DBNAME = "witcore";
+   */
 
 	private $conn;
 

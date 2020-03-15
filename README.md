@@ -31,3 +31,11 @@ Desta forma você consegue zerar suas tabelas e manter toda a integridade do ban
 É isso ai.
 
 ====================================================================================================================================
+
+2 - ================================================================================================================================
+ 
+Quando subir a aplicação para o servidor de escolha (deploy), existe um ajuste a ser feito no slim:
+   Vá na pasta vendor->slim->slim e copie o arquivo .htaccess. Cole esse arquivo na pasta raiz do projeto onde está o index.php.
+   Com isso o sistema de rotas do slim funcionará corretamente
+
+====================================================================================================================================

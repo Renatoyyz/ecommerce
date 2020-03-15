@@ -33,7 +33,7 @@ use \Hcode\DB\Sql;
 
    	$sql = new Sql();
 
-   	$results = $sql->select("SELECT * FROM db_ecommerce.tb_persons WHERE idperson = :idperson;",[
+   	$results = $sql->select("SELECT * FROM tb_persons WHERE idperson = :idperson;",[
 
    		':idperson'=>$user->getidperson()
 
