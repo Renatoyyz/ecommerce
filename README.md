@@ -50,3 +50,30 @@ Bons estudos :)
 Equipe Hcode
 
 ====================================================================================================================================
+
+Passos para inserir e manipular no repositorio Github:
+
+1 - Crie o reposirorio no Github com o mesmo nome de pasta que voce criar no pc
+2 - Crie ou use a pasta em um diretorio no pc
+3 - abra o bash do git no diretorio correspondente
+4 - Execute o comando git init
+5 - Execute o comando git add --all ou git add sua_pasta_ou_arquivo.xxx , para colocar os arquivos na fila do github
+6 - Execute o git commit -m "sua mensagem" para validar os arquivo na fila do github
+7 - Execute o comando git remote add origin https://github.com/seuusuario/sua_pasta_de_reposirorio.git
+8 - Fazer configurações com: git config --global user.name "Qualquer nome" 
+                             git config --global user.email "seuemail@xpto.com.br"
+
+7 - Agora é o upload no github com o comando: git push origin master. Vai pedir login e senha 
+
+
+Agora toda vez que precisar acessar o repositorio para alterações basta:
+     - iniciar com git init
+     - adicionar na fila com git add --all ou git add sua_pasta_ou_arquivo.xxx
+     - comitar com git commit -m "sua mensagem"
+     - empurar com git push origin master
+Se por acaso haver conflitos por edições tanto no diretorio local como remoto, faça um git pull origin master
+que será concatenado os textos e então voce escolhe como será escrito, vá no console e segue os passos:
+     - git add --all
+     - git commit -m "sua mensagem"
+     - git push origin master
+
